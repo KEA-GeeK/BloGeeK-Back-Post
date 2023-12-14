@@ -34,7 +34,7 @@ dependencies {
 
 	// Database
 	runtimeOnly 'mysql:mysql-connector-java:8.0.28'
-
+	//runtimeOnly 'org.mariadb.jdbc:mariadb-java-client' /driver-class-name: org.mariadb.jdbc.Driver
 
 	// Lombok
 	compileOnly 'org.projectlombok:lombok'
