@@ -2,6 +2,7 @@ package Geek.Blog.repository;
 
 import Geek.Blog.dto.PostDTO;
 import Geek.Blog.entity.Category;
+import Geek.Blog.entity.Member;
 import Geek.Blog.entity.Post;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityNotFoundException;
@@ -25,11 +26,16 @@ public class PostJPARepository implements PostRepository{
     @Override
     public Optional<Post> upload(PostDTO postDTO) {
         try {
-            Post post = new Post();
-            post.setPost_title(postDTO.getPost_title());
-            post.setContents(postDTO.getContents());
-            post.setAuthor(memberRepository.findById(postDTO.getClaimer_id())
-                    .orElseThrow(() -> new EntityNotFoundException("Member not found with ID: " + postDTO.getClaimer_id())));
+            Member author = memberRepository.findById(postDTO.getClaimer_id())
+                    .orElseThrow(() -> new EntityNotFoundException("Member not found with ID: " + postDTO.getClaimer_id()));
+
+            Post post = Post.builder()
+                    .post_title(postDTO.getPost_title())
+                    .contents(postDTO.getContents())
+                    .author(author)
+                    .category(postDTO.getCategory())
+                    .build();
+
 
             em.persist(post);
             return Optional.of(post);
@@ -57,9 +63,10 @@ public class PostJPARepository implements PostRepository{
 
     @Override
     public Post edit(Post post) {
-        Query query =  em.createQuery("UPDATE Post p SET p.post_title = :newTitle, p.contents = :newContent WHERE p.post_id = :id");
+        Query query =  em.createQuery("UPDATE Post p SET p.post_title = :newTitle, p.contents = :newContent, p.category = :category WHERE p.post_id = :id");
         query.setParameter("newTitle", post.getPost_title());
         query.setParameter("newContent", post.getContents());
+        query.setParameter("category", post.getCategory());
         query.setParameter("id", post.getPost_id());
 
         query.executeUpdate();

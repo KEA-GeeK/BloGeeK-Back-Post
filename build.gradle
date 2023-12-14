@@ -33,7 +33,8 @@ dependencies {
 	//implementation 'org.springframework.cloud:spring-cloud-starter-netflix-eureka-client'
 
 	// Database
-	runtimeOnly 'org.mariadb.jdbc:mariadb-java-client'
+	runtimeOnly 'mysql:mysql-connector-java:8.0.28'
+
 
 	// Lombok
 	compileOnly 'org.projectlombok:lombok'

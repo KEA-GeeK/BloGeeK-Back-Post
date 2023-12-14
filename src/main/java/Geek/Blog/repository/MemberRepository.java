@@ -1,12 +1,12 @@
 package Geek.Blog.repository;
 
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
 import Geek.Blog.entity.Member;
 
+import java.util.List;
 import java.util.Optional;
 
-@Repository
-public interface MemberRepository extends JpaRepository<Member, Long> {
+public interface MemberRepository {
     Optional<Member> findByAccount(String account);
+    Optional<Member> findById(Long id);
+    List<Member> findAll();
 }

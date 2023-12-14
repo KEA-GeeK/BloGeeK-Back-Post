@@ -65,6 +65,7 @@ public class PostUserController {
             if (Objects.equals(post.getAuthor().getId(), form.getClaimer_id())){
                 post.setPost_title(form.getPost_title());
                 post.setContents(form.getContents());
+                post.setCategory(form.getCategory());
                 postService.editPost(post);
                 return ResponseEntity.ok(new PostResponseDTO(post));
             }

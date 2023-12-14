@@ -1,19 +1,15 @@
 package Geek.Blog.config.security;
 
-import Geek.Blog.util.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityConfiguration;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 
@@ -21,9 +17,6 @@ import org.springframework.security.web.SecurityFilterChain;
 @RequiredArgsConstructor
 @Configuration
 public class SecurityConfig  {
-
-    private final JwtTokenProvider jwtTokenProvider;
-    private UserDetailService userDetailService;
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -46,7 +39,7 @@ public class SecurityConfig  {
                         .requestMatchers(HttpMethod.POST, "/api/member/join").permitAll() // 회원가입 요청은 인증 없이 허용
 //                        .requestMatchers(HttpMethod.DELETE, "/api/member/withdraw").authenticated() // 회원탈퇴 요청은 인증 요구
                         .requestMatchers(HttpMethod.POST, "/api/admin/**").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.POST, "/api/user/**").hasRole("USER")
+//                        .requestMatchers(HttpMethod.POST, "/api/user/**").hasRole("USER")
                         .anyRequest().permitAll()
                 );
 //         .and()

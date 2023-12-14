@@ -2,6 +2,7 @@ package Geek.Blog.repository;
 
 import Geek.Blog.dto.BlogDTO;
 import Geek.Blog.entity.Blog;
+import Geek.Blog.entity.Member;
 import Geek.Blog.util.ImageUtil;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityNotFoundException;
@@ -23,13 +24,15 @@ public class BlogJPARepository implements BlogRepository{
 
     @Override
     public Blog create(BlogDTO blogDTO) {
-        Blog blog = new Blog();
+        Member owner = memberRepository.findById(blogDTO.getOwner_id())
+                .orElseThrow(() -> new EntityNotFoundException("Member not found with ID: " + blogDTO.getOwner_id()));
 
-        blog.setBlog_name(blogDTO.getBlog_name());
-        blog.setAbout_blog(blogDTO.getAbout_blog());
-        blog.setProfile_picture(blogDTO.getProfilePicture());
-        blog.setOwner(memberRepository.findById(blogDTO.getOwner_id())
-                .orElseThrow(() -> new EntityNotFoundException("Member not found with ID: " + blogDTO.getOwner_id())));
+        Blog blog = Blog.builder()
+                .blog_name(blogDTO.getBlog_name())
+                .about_blog(blogDTO.getAbout_blog())
+                .profile_picture(blogDTO.getProfilePicture())
+                .owner(owner)
+                .build();
 
         em.persist(blog);
         return blog;
