@@ -9,5 +9,5 @@ public interface BlogRepository {
     Blog create(BlogDTO blogDTO);
     Optional<Blog> findById(Long id);
     Blog edit(Blog blog);
-    Integer deleteById(Long id);
+    Integer delete(Blog blog);
 }

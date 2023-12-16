@@ -29,11 +29,10 @@ public class BlogService {
     /** 회원 가입,탈퇴시 사용 (BlogController에서 사용 X)**/
     //TODO 회원 가입·회원 탈퇴 과정에 끼워넣기
     public Blog create(BlogDTO blogDTO) {
-        Blog blog = blogRepository.create(blogDTO);
-        return blog;
+        return blogRepository.create(blogDTO);
     }
 
-    public void deleteBlog(Blog blog){
-        blogRepository.deleteById(blog.getBlog_id());
+    public Integer deleteBlog(Blog blog){
+        return blogRepository.delete(blog);
     }
 }

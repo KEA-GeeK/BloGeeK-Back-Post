@@ -1,6 +1,7 @@
 package Geek.Blog.controller;
 
 import Geek.Blog.dto.BlogDTO;
+import Geek.Blog.dto.BlogDeleteDTO;
 import Geek.Blog.dto.BlogEditDTO;
 import Geek.Blog.entity.Blog;
 import Geek.Blog.service.BlogService;
@@ -21,6 +22,18 @@ public class BlogController {
     @Autowired
     public BlogController(BlogService blogService) {
         this.blogService = blogService;
+    }
+
+    @PostMapping("/create")
+    public ResponseEntity<Object> createBlog(@RequestBody BlogDTO blogDTO) {
+
+        Blog blog = blogService.create(blogDTO);
+
+        if (blog == null) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("블로그 생성에 실패했습니다.");
+        } else {
+            return ResponseEntity.status(HttpStatus.CREATED).body(new BlogDTO(blog));
+        }
     }
 
     @GetMapping("/{blogId}")
@@ -61,21 +74,28 @@ public class BlogController {
     }
 
     /* 삭제 요청은 가능하면 컨트롤러 사용하지 않도록 할 예정 */
-//    @DeleteMapping("/{blogId}")
-//    public ResponseEntity<String> deletePost(@PathVariable Long blogId, @RequestBody BlogDTO blogDTO) {
-//        try {
-//            Blog blog = blogService.viewBlog(blogId).orElseThrow(() -> new EntityNotFoundException("Invalid ID"));
-//
-//            //유저 ID 검사
-//            if (Objects.equals(blog.getOwner().getId(), blogDTO.getOwner_id())){
-//                blogService.deleteBlog(blog);
-//                return ResponseEntity.ok("Deleted successfully");
-//            }
-//            else {
-//                return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Delete Denied");
-//            }
-//        } catch (EntityNotFoundException e) {
-//            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Post not found with ID: " + blogId);
-//        }
-//    }
+    @DeleteMapping("/{blogId}")
+    public ResponseEntity<String> deleteBlog(@PathVariable Long blogId, @RequestBody BlogDeleteDTO blogDeleteDTO) {
+        try {
+            Blog blog = blogService.viewBlog(blogId).orElseThrow(() -> new EntityNotFoundException("Invalid ID"));
+
+            //유저 ID 검사
+            if (Objects.equals(blog.getOwner().getId(), blogDeleteDTO.getClaimer_id())){
+                Integer result = blogService.deleteBlog(blog);
+                if (result == -1){
+                    return ResponseEntity.status(HttpStatus.CONFLICT).body("Delete Denied");
+                } else if (result == 1) {
+                    return ResponseEntity.ok("Deleted successfully");
+                }
+                else {
+                    return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Delete failed");
+                }
+            }
+            else {
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Delete Denied");
+            }
+        } catch (EntityNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Blog not found with ID: " + blogId);
+        }
+    }
 }

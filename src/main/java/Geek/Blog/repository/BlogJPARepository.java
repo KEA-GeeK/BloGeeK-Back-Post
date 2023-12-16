@@ -26,6 +26,9 @@ public class BlogJPARepository implements BlogRepository{
     public Blog create(BlogDTO blogDTO) {
         Member owner = memberRepository.findById(blogDTO.getOwner_id())
                 .orElseThrow(() -> new EntityNotFoundException("Member not found with ID: " + blogDTO.getOwner_id()));
+        if (owner.getBlog().getBlog_id() != null){
+            throw new EntityNotFoundException("Blog already exists");
+        }
 
         Blog blog = Blog.builder()
                 .blog_name(blogDTO.getBlog_name())
@@ -62,9 +65,15 @@ public class BlogJPARepository implements BlogRepository{
     }
 
     @Override
-    public Integer deleteById(Long id) {
+    public Integer delete(Blog blog) {
+        Member member = memberRepository.findById(blog.getOwner().getId()).orElse(null);
+
+        if (member != null) {
+            return -1;
+        }
+
         Query query = em.createQuery("DELETE FROM Blog b WHERE b.blog_id = :id");
-        query.setParameter("id", id);
+        query.setParameter("id", blog.getBlog_id());
 
         return query.executeUpdate();
     }

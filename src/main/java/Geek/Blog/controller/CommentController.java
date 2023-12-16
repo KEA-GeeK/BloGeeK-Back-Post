@@ -31,7 +31,6 @@ public class CommentController {
     @PostMapping("/write")
     public ResponseEntity<Object> createComment(@RequestBody CommentDTO commentDTO) {
 
-        commentDTO.setPost_id(commentDTO.getPost_id());
         Comment comment = commentService.upload(commentDTO);
 
         if (comment == null) {
