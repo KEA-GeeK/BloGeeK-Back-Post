@@ -29,6 +29,10 @@ public class Comment {
     @Column(nullable = false)
     private String contents;
 
+    private Boolean unsmile;
+
+    private Integer sentimentPercent;
+
     @Column(nullable = false) @CreationTimestamp
     private LocalDateTime create_at;
 
